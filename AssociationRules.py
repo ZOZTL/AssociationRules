@@ -4,17 +4,19 @@ import json
 import pandas as pd
 from progressbar import *
 
+#支持度阈值
 support = 0.1
+#置信度阈值
 confidence = 0.5
 PropertyList = ['Priority', 'Location', 'Area Id', 'beat', 'Priority', 'Incident Type Id', 'Incident Type Descripe',
-                 'Event Number']
+                'Event Number']
 
-#数据处理类
-class OaklandCrimeStatistics():
+
+# 数据处理类
+class OaklandCrimeStatistics:
     def __init__(self):
         # 结果文件路径
         self.resultPath = '/Users/suxiangying/Documents/Data/results'
-
         pass
 
     def dataRead(self):
@@ -26,15 +28,7 @@ class OaklandCrimeStatistics():
         data2015 = pd.read_csv("/Users/suxiangying/Documents/Data/Oakland-Crime/records-for-2015.csv", encoding="utf-8")
         data2016 = pd.read_csv("/Users/suxiangying/Documents/Data/Oakland-Crime/records-for-2016.csv", encoding="utf-8")
 
-        """
-        print("2011数据集有以下属性", data2011.columns)
-        print("2012数据集有以下属性", data2012.columns)
-        print("2013数据集有以下属性", data2013.columns)
-        print("2014数据集有以下属性", data2014.columns)
-        print("2015数据集有以下属性", data2015.columns)
-        print("2016数据集有以下属性", data2016.columns)
-        """
-
+        # 特殊数据处理
         data2012.rename(columns={"Location 1": "Location"}, inplace=True)
         data2013.rename(columns={"Location ": "Location"}, inplace=True)
         data2014.rename(columns={"Location 1": "Location"}, inplace=True)
@@ -59,14 +53,13 @@ class OaklandCrimeStatistics():
              "Event Number"]]
 
         dataAll = pd.concat([data2011temp, data2012temp, data2013temp, data2014temp, data2015temp, data2016temp],
-                             axis=0)
-        print("综合数据集有以下属性", dataAll.columns)
+                            axis=0)
+
         dataAll = dataAll.dropna(how='any')
 
-        return dataAll.head(50000)
-        # return dataAll
+        return dataAll
 
-    def mining(self, feature_list):
+    def mining(self, featureList):
         outPath = self.resultPath
         association = AssociationRules()
 
@@ -77,7 +70,7 @@ class OaklandCrimeStatistics():
 
         dataSet = []
         featureNames = ["Agency", "Location", "Area Id", "Beat", "Priority", "Incident Type Id",
-                         "Incident Type Description", "Event Number"]
+                        "Incident Type Description", "Event Number"]
         for dataLine in rows:
             dataSet = []
             for i, value in enumerate(dataLine):
@@ -126,12 +119,13 @@ class OaklandCrimeStatistics():
             rulesFile.write(jsonStr + '\n')
         rulesFile.close()
 
+
 if __name__ == "__main__":
     OaklandCrimeStatistics().mining(PropertyList)
 
 
-#关联规则算法类
-class AssociationRules():
+# 关联规则算法类
+class AssociationRules:
     def __init__(self):
         self.support = support
         self.confidence = confidence
@@ -206,6 +200,7 @@ class AssociationRules():
     :param supRata: 频繁项集对应的支持度
     :return: 强关联规则列表
     """
+
     def generateRules(self, freq, supRata):
         strongRulesList = []
         for i in range(1, len(freq)):
