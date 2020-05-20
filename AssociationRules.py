@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 import json
-
 import pandas as pd
 from progressbar import *
 
-#支持度阈值
+# 支持度阈值
 support = 0.1
-#置信度阈值
+# 置信度阈值
 confidence = 0.5
 PropertyList = ['Priority', 'Location', 'Area Id', 'beat', 'Priority', 'Incident Type Id', 'Incident Type Descripe',
                 'Event Number']
